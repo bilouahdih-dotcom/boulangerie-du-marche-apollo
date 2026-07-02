@@ -62,12 +62,6 @@
   .wrap{width:min(100% - 2.5rem,var(--maxw));margin-inline:auto;}
   ::selection{background:var(--accent);color:var(--cream);}
 
-  /* Grain */
-  body::after{
-    content:'';position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.05;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
   /* ===== Preloader ===== */
   .preloader{
     position:fixed;inset:0;z-index:1200;background:var(--ink);color:var(--cream);
@@ -79,13 +73,6 @@
   .preloader .pl-name span{display:inline-block;transform:translateY(110%);animation:plrise .9s var(--ease) forwards;}
   @keyframes plrise{to{transform:none;}}
   .preloader .pl-count{font-size:.85rem;letter-spacing:.35em;color:var(--gold);font-weight:700;}
-
-  /* ===== Curseur custom ===== */
-  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;z-index:1100;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);}
-  .cursor-dot{width:8px;height:8px;background:var(--accent);}
-  .cursor-ring{width:38px;height:38px;border:1.5px solid rgba(192,90,53,.6);transition:width .3s var(--ease),height .3s var(--ease),background .3s;}
-  .cursor-ring.grow{width:70px;height:70px;background:rgba(192,90,53,.12);}
-  @media (pointer:coarse){.cursor-dot,.cursor-ring{display:none;}}
 
   /* Progress bar */
   .scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--gold));z-index:1000;}
@@ -123,35 +110,37 @@
   body.menu-open .menu-btn .bars span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
   body.menu-open .logo{color:var(--cream)!important;}
 
-  /* ===== Menu overlay plein écran ===== */
-  .menu-overlay{
-    position:fixed;inset:0;z-index:940;background:#1a100a;color:var(--cream);
-    clip-path:circle(0% at calc(100% - 3rem) 2.5rem);
-    transition:clip-path .9s var(--ease);
-    display:flex;align-items:center;
+  /* ===== Menu déroulant ===== */
+  .menu-backdrop{position:fixed;inset:0;z-index:930;background:rgba(20,12,7,.45);opacity:0;pointer-events:none;transition:opacity .5s;}
+  body.menu-open .menu-backdrop{opacity:1;pointer-events:auto;}
+  .menu-drop{
+    position:fixed;inset:0 0 auto 0;z-index:940;background:#1a100a;color:var(--cream);
+    transform:translateY(-105%);transition:transform .65s var(--ease);
+    padding:6.5rem 2.2rem 2.4rem;border-radius:0 0 26px 26px;
+    box-shadow:0 30px 60px rgba(0,0,0,.4);
   }
-  body.menu-open .menu-overlay{clip-path:circle(150% at calc(100% - 3rem) 2.5rem);}
-  .menu-inner{width:min(100% - 3rem,1100px);margin-inline:auto;display:grid;grid-template-columns:1.3fr .7fr;gap:3rem;align-items:center;}
-  .menu-links{list-style:none;display:flex;flex-direction:column;gap:.4rem;counter-reset:m;}
+  body.menu-open .menu-drop{transform:translateY(0);}
+  .menu-inner{width:min(100%,1100px);margin-inline:auto;}
+  .menu-links{list-style:none;display:flex;flex-direction:column;gap:.2rem;counter-reset:m;}
   .menu-links a{
-    font-family:'Fraunces';font-weight:900;font-size:clamp(2.2rem,7vw,4.6rem);line-height:1.08;
-    display:inline-flex;align-items:baseline;gap:1.1rem;
-    opacity:0;transform:translateY(40px);transition:opacity .6s var(--ease),transform .6s var(--ease),color .3s;
+    font-family:'Fraunces';font-weight:900;font-size:clamp(1.6rem,4.5vw,2.6rem);line-height:1.3;
+    display:inline-flex;align-items:baseline;gap:.9rem;
+    opacity:0;transform:translateY(-14px);
+    transition:opacity .45s var(--ease),transform .45s var(--ease),color .3s;
   }
   body.menu-open .menu-links a{opacity:1;transform:none;}
-  .menu-links li:nth-child(1) a{transition-delay:.15s}.menu-links li:nth-child(2) a{transition-delay:.22s}
-  .menu-links li:nth-child(3) a{transition-delay:.29s}.menu-links li:nth-child(4) a{transition-delay:.36s}
-  .menu-links li:nth-child(5) a{transition-delay:.43s}
-  .menu-links a::before{counter-increment:m;content:"0" counter(m);font-family:'Manrope';font-size:.85rem;font-weight:700;color:var(--gold);letter-spacing:.1em;}
+  .menu-links li:nth-child(1) a{transition-delay:.18s}.menu-links li:nth-child(2) a{transition-delay:.24s}
+  .menu-links li:nth-child(3) a{transition-delay:.3s}.menu-links li:nth-child(4) a{transition-delay:.36s}
+  .menu-links li:nth-child(5) a{transition-delay:.42s}
+  .menu-links a::before{counter-increment:m;content:"0" counter(m);font-family:'Manrope';font-size:.8rem;font-weight:700;color:var(--gold);letter-spacing:.1em;}
   .menu-links a:hover{color:var(--gold);}
-  .menu-aside{color:#c9b49a;font-size:.95rem;opacity:0;transition:opacity .6s .5s;}
-  body.menu-open .menu-aside{opacity:1;}
-  .menu-aside b{color:var(--cream);display:block;margin-bottom:.3rem;}
-  .menu-aside p+p{margin-top:1.4rem;}
+  .menu-foot{display:flex;gap:2.5rem;flex-wrap:wrap;margin-top:2rem;padding-top:1.6rem;border-top:1px solid rgba(246,234,217,.14);color:#c9b49a;font-size:.9rem;opacity:0;transition:opacity .5s .45s;}
+  body.menu-open .menu-foot{opacity:1;}
+  .menu-foot b{color:var(--cream);display:block;}
 
   /* ===== Hero ===== */
   .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;color:var(--cream);}
-  .hero-bg{position:absolute;inset:-12% 0;z-index:-2;will-change:transform;}
+  .hero-bg{position:absolute;inset:0;z-index:-2;}
   .hero-bg img{width:100%;height:100%;object-fit:cover;transform:scale(1.15);animation:heroZoom 2.6s var(--ease) forwards;}
   @keyframes heroZoom{to{transform:scale(1.02);}}
   .hero::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(20,12,7,.92) 0%,rgba(20,12,7,.35) 45%,rgba(20,12,7,.55) 100%);}
@@ -176,7 +165,7 @@
     transition:transform .4s var(--ease),box-shadow .4s var(--ease);
   }
   .btn:hover{transform:translateY(-3px);box-shadow:0 22px 40px rgba(192,90,53,.45);}
-  .btn-ghost{background:rgba(246,234,217,.12);border:1.5px solid rgba(246,234,217,.4);backdrop-filter:blur(8px);box-shadow:none;}
+  .btn-ghost{background:rgba(246,234,217,.14);border:1.5px solid rgba(246,234,217,.4);box-shadow:none;}
   .btn-ghost:hover{background:rgba(246,234,217,.22);}
   .hero-meta{
     position:absolute;right:2.2rem;bottom:4.5rem;display:flex;flex-direction:column;gap:.3rem;text-align:right;
@@ -322,12 +311,29 @@
 
   .fab{display:none;position:fixed;right:1.1rem;bottom:1.1rem;z-index:950;box-shadow:0 12px 32px rgba(192,90,53,.55);}
 
+  /* ===== Transitions douces partout ===== */
+  a{transition:color .3s,opacity .3s;}
+  .h-card{transition:transform .5s var(--ease),box-shadow .5s var(--ease);}
+  .h-card:hover{transform:translateY(-8px);box-shadow:0 24px 44px rgba(0,0,0,.35);}
+  .rev-card{transition:transform .4s var(--ease),box-shadow .4s var(--ease);}
+  .rev-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(35,23,16,.12);}
+  .contact-list a:hover{color:var(--accent);}
+  .map-wrap{transition:transform .5s var(--ease),box-shadow .5s var(--ease);}
+  .map-wrap:hover{transform:translateY(-4px);}
+  .hours-table tr{transition:background .3s;}
+  .hours-table tr:hover{background:rgba(192,90,53,.06);}
+  .stat{transition:transform .4s var(--ease);}
+  .stat:hover{transform:translateY(-4px);}
+  .ico{transition:transform .35s var(--ease),background .3s;}
+  .contact-list li:hover .ico{transform:scale(1.12);background:var(--gold);}
+  .call-pill,.menu-btn{transition:transform .35s var(--ease),color .3s;}
+  .menu-btn:hover{transform:scale(1.06);}
+
   @media (max-width:880px){
     .about-grid,.infos-grid,.band-inner,.menu-inner{grid-template-columns:1fr;}
     .band-big{text-align:left;}
     .hero-meta{display:none;}
     .h-card{flex-basis:74vw;}
-    .menu-aside{display:none;}
     .band{padding:3.5rem 1.8rem;}
     .fab{display:inline-flex;}
     .call-pill{display:none;}
@@ -353,10 +359,6 @@
   <div class="pl-count" data-count>0%</div>
 </div>
 
-<!-- Curseur -->
-<div class="cursor-dot" data-cdot></div>
-<div class="cursor-ring" data-cring></div>
-
 <div class="scroll-progress" data-progress></div>
 
 <header class="site-header" data-header>
@@ -370,20 +372,21 @@
   </div>
 </header>
 
-<!-- Menu overlay -->
-<nav class="menu-overlay" data-menu>
+<!-- Menu déroulant -->
+<div class="menu-backdrop" data-backdrop></div>
+<nav class="menu-drop" data-menu>
   <div class="menu-inner">
     <ul class="menu-links">
-      <li><a href="#maison" data-hover>La maison</a></li>
-      <li><a href="#produits" data-hover>Nos produits</a></li>
-      <li><a href="#traiteur" data-hover>Traiteur</a></li>
-      <li><a href="#avis" data-hover>Avis clients</a></li>
-      <li><a href="#infos" data-hover>Infos &amp; plan</a></li>
+      <li><a href="#maison">La maison</a></li>
+      <li><a href="#produits">Nos produits</a></li>
+      <li><a href="#traiteur">Traiteur</a></li>
+      <li><a href="#avis">Avis clients</a></li>
+      <li><a href="#infos">Infos &amp; plan</a></li>
     </ul>
-    <div class="menu-aside">
-      <p><b>Adresse</b>18 Rue Henri Thirard<br/>94240 L'Haÿ-les-Roses</p>
-      <p><b>Horaires</b>Mardi — Dimanche · 7h00 – 20h00<br/>Fermé le lundi</p>
-      <p><b>Contact</b><a href="tel:+33100000000">01 00 00 00 00</a> (à confirmer)</p>
+    <div class="menu-foot">
+      <p><b>Adresse</b>18 Rue Henri Thirard, 94240 L'Haÿ-les-Roses</p>
+      <p><b>Horaires</b>Mar — Dim · 7h – 20h · Fermé lundi</p>
+      <p><b>Contact</b><a href="tel:+33100000000">01 00 00 00 00</a></p>
     </div>
   </div>
 </nav>
@@ -392,8 +395,8 @@
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-bg" data-parallax="0.25">
-      <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1800&q=80" alt="Pains artisanaux sortis du four" />
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&q=70" alt="Pains artisanaux sortis du four" fetchpriority="high" decoding="async" />
     </div>
     <div class="wrap hero-content">
       <p class="eyebrow-hero">L'Haÿ-les-Roses · Depuis 2010</p>
@@ -437,7 +440,7 @@
   <section id="maison" class="wrap about-grid">
     <div class="about-media">
       <div class="img-reveal" data-img-reveal>
-        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=900&q=80" alt="Vitrine de viennoiseries fraîches" />
+        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=640&q=70" alt="Vitrine de viennoiseries fraîches" loading="lazy" decoding="async" />
       </div>
       <div class="about-sticker">artisan<br/>depuis<br/>2010</div>
     </div>
@@ -462,11 +465,11 @@
         <span class="h-hint">Scroll → la vitrine défile</span>
       </div>
       <div class="h-track" data-htrack>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=900&q=80" alt="Pains de tradition" /><span class="h-num">01</span><span class="h-tag">Pains &amp; tradition</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=900&q=80" alt="Croissants pur beurre" /><span class="h-num">02</span><span class="h-tag">Viennoiseries</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=900&q=80" alt="Tartes et pâtisseries" /><span class="h-num">03</span><span class="h-tag">Pâtisserie</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=900&q=80" alt="Sandwichs frais" /><span class="h-num">04</span><span class="h-tag">Sandwichs</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=900&q=80" alt="Gâteaux maison" /><span class="h-num">05</span><span class="h-tag">Gâteaux maison</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=640&q=70" alt="Pains de tradition" loading="lazy" decoding="async" /><span class="h-num">01</span><span class="h-tag">Pains &amp; tradition</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=640&q=70" alt="Croissants pur beurre" loading="lazy" decoding="async" /><span class="h-num">02</span><span class="h-tag">Viennoiseries</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=640&q=70" alt="Tartes et pâtisseries" loading="lazy" decoding="async" /><span class="h-num">03</span><span class="h-tag">Pâtisserie</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=640&q=70" alt="Sandwichs frais" loading="lazy" decoding="async" /><span class="h-num">04</span><span class="h-tag">Sandwichs</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=640&q=70" alt="Gâteaux maison" loading="lazy" decoding="async" /><span class="h-num">05</span><span class="h-tag">Gâteaux maison</span></div>
       </div>
     </div>
   </section>
@@ -563,7 +566,7 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var count = document.querySelector('[data-count]');
   if(!pl){document.body.classList.remove('locked');return;}
   if(reduced){pl.remove();document.body.classList.remove('locked');return;}
-  var start = null, dur = 1300;
+  var start = null, dur = 900;
   function step(t){
     if(!start) start = t;
     var p = Math.min((t-start)/dur, 1);
@@ -592,45 +595,28 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
 })();
 
-/* ---- Curseur custom ---- */
-(function(){
-  if(!window.matchMedia('(pointer:fine)').matches || reduced) return;
-  var dot = document.querySelector('[data-cdot]'), ring = document.querySelector('[data-cring]');
-  var mx=-100,my=-100,rx=-100,ry=-100;
-  window.addEventListener('pointermove',function(e){mx=e.clientX;my=e.clientY;},{passive:true});
-  (function loop(){
-    rx += (mx-rx)*.16; ry += (my-ry)*.16;
-    dot.style.transform='translate('+(mx-4)+'px,'+(my-4)+'px)';
-    ring.style.transform='translate('+(rx-19)+'px,'+(ry-19)+'px)';
-    requestAnimationFrame(loop);
-  })();
-  document.querySelectorAll('a,button,[data-hover]').forEach(function(el){
-    el.addEventListener('pointerenter',function(){ring.classList.add('grow');});
-    el.addEventListener('pointerleave',function(){ring.classList.remove('grow');});
-  });
-})();
-
-/* ---- Menu overlay ---- */
+/* ---- Menu déroulant ---- */
 (function(){
   var btn = document.querySelector('[data-menu-btn]');
   var menu = document.querySelector('[data-menu]');
+  var backdrop = document.querySelector('[data-backdrop]');
+  function close(){
+    document.body.classList.remove('menu-open');
+    btn.querySelector('.label').textContent='Menu';
+  }
   btn.addEventListener('click',function(){
     document.body.classList.toggle('menu-open');
     btn.querySelector('.label').textContent = document.body.classList.contains('menu-open')?'Fermer':'Menu';
   });
-  menu.querySelectorAll('a').forEach(function(a){
-    a.addEventListener('click',function(){
-      document.body.classList.remove('menu-open');
-      btn.querySelector('.label').textContent='Menu';
-    });
-  });
+  menu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',close); });
+  backdrop.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape') close(); });
 })();
 
 /* ---- Scroll global : header, progress, parallax, horizontal, statement ---- */
 (function(){
   var header = document.querySelector('[data-header]');
   var progress = document.querySelector('[data-progress]');
-  var parallaxEls = document.querySelectorAll('[data-parallax]');
   var hsection = document.querySelector('[data-hscroll]');
   var htrack = document.querySelector('[data-htrack]');
   var statement = document.querySelector('[data-statement]');
@@ -674,18 +660,13 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     progress.style.width = (max>0 ? (sy/max)*100 : 0)+'%';
 
     if(!reduced){
-      parallaxEls.forEach(function(el){
-        var sp = parseFloat(el.getAttribute('data-parallax'))||.2;
-        el.style.transform = 'translateY('+(sy*sp)+'px)';
-      });
-
       if(hsection && htrack){
         var r = hsection.getBoundingClientRect();
         var total = hsection.offsetHeight - window.innerHeight;
         if(total>0){
           var prog = Math.min(Math.max(-r.top/total,0),1);
           var extra = htrack.scrollWidth - window.innerWidth;
-          htrack.style.transform = 'translateX('+(-prog*extra)+'px)';
+          htrack.style.transform = 'translate3d('+(-prog*extra)+'px,0,0)';
         }
       }
 
