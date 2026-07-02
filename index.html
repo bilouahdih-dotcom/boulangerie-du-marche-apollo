@@ -229,16 +229,17 @@
   .stat b em{font-style:normal;font-size:.55em;color:var(--gold);}
   .stat span{font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
 
-  /* ===== Section horizontale produits ===== */
-  .h-scroll{padding:0;background:var(--ink);color:var(--cream);}
-  .h-sticky{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;}
-  .h-head{padding:3.2rem 2.2rem 2rem;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;}
+  /* ===== Vitrine auto-défilante ===== */
+  .h-scroll{padding:6rem 0;background:var(--ink);color:var(--cream);overflow:hidden;}
+  .h-head{width:min(100% - 2.5rem,var(--maxw));margin-inline:auto;padding-bottom:2.5rem;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;}
   .h-head h2{font-size:clamp(2rem,5vw,3.6rem);color:var(--cream);}
   .h-head .h-hint{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);font-weight:700;white-space:nowrap;}
-  .h-track{display:flex;gap:1.6rem;padding:0 2.2rem 3rem;will-change:transform;}
+  .h-track{display:flex;width:max-content;animation:hslide 45s linear infinite;will-change:transform;}
+  .h-track:hover{animation-play-state:paused;}
+  @keyframes hslide{to{transform:translateX(-50%);}}
   .h-card{
-    flex:0 0 clamp(300px,34vw,460px);border-radius:24px;overflow:hidden;position:relative;aspect-ratio:3.4/4;
-    background:#312115;
+    flex:0 0 clamp(300px,34vw,460px);margin-right:1.6rem;border-radius:24px;overflow:hidden;position:relative;aspect-ratio:3.4/4;
+    background:#312115;cursor:zoom-in;
   }
   .h-card img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);}
   .h-card:hover img{transform:scale(1.08);}
@@ -311,6 +312,18 @@
 
   .fab{display:none;position:fixed;right:1.1rem;bottom:1.1rem;z-index:950;box-shadow:0 12px 32px rgba(192,90,53,.55);}
 
+  /* ===== Lightbox photos ===== */
+  .lightbox{
+    position:fixed;inset:0;z-index:1150;background:rgba(15,9,5,.92);
+    display:flex;align-items:center;justify-content:center;padding:2rem;
+    opacity:0;pointer-events:none;transition:opacity .35s;
+  }
+  .lightbox.on{opacity:1;pointer-events:auto;}
+  .lightbox img{max-width:92vw;max-height:86vh;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);transform:scale(.94);transition:transform .35s var(--ease);}
+  .lightbox.on img{transform:scale(1);}
+  .lightbox .lb-close{position:absolute;top:1rem;right:1.4rem;background:none;border:none;color:var(--cream);font-size:2.4rem;cursor:pointer;line-height:1;}
+  .img-reveal{cursor:zoom-in;}
+
   /* ===== Transitions douces partout ===== */
   a{transition:color .3s,opacity .3s;}
   .h-card{transition:transform .5s var(--ease),box-shadow .5s var(--ease);}
@@ -344,9 +357,7 @@
     .reveal,.mask-title span,.statement .sw{opacity:1;transform:none;}
     .img-reveal img{clip-path:inset(0);transform:none;}
     .preloader{display:none;}
-    .h-scroll{height:auto!important;}
-    .h-sticky{position:static;height:auto;}
-    .h-track{overflow-x:auto;transform:none!important;}
+    .h-track{animation:none;width:auto;overflow-x:auto;}
     .hero-title .ch{transform:none;}
   }
 </style>
@@ -364,7 +375,7 @@
 <header class="site-header" data-header>
   <a href="#" class="logo">Marché Apollo<small>Boulangerie · Pâtisserie</small></a>
   <div class="header-right">
-    <a href="tel:+33100000000" class="call-pill" data-hover>📞 01 00 00 00 00</a>
+    <a href="tel:+33967393761" class="call-pill" data-hover>📞 09 67 39 37 61</a>
     <button class="menu-btn" data-menu-btn data-hover aria-label="Menu">
       <span class="label">Menu</span>
       <span class="bars"><span></span><span></span><span></span></span>
@@ -386,7 +397,7 @@
     <div class="menu-foot">
       <p><b>Adresse</b>18 Rue Henri Thirard, 94240 L'Haÿ-les-Roses</p>
       <p><b>Horaires</b>Mar — Dim · 7h – 20h · Fermé lundi</p>
-      <p><b>Contact</b><a href="tel:+33100000000">01 00 00 00 00</a></p>
+      <p><b>Contact</b><a href="tel:+33967393761">09 67 39 37 61</a></p>
     </div>
   </div>
 </nav>
@@ -407,7 +418,7 @@
       <div class="hero-sub">
         <p>Pains au levain, viennoiseries pur beurre et pâtisserie maison — pétris et cuits sur place, chaque matin, depuis quinze ans.</p>
         <div class="hero-ctas">
-          <a href="tel:+33100000000" class="btn" data-hover>📞 Appeler</a>
+          <a href="tel:+33967393761" class="btn" data-hover>📞 Appeler</a>
           <a href="#infos" class="btn btn-ghost" data-hover>📍 Itinéraire</a>
         </div>
       </div>
@@ -457,20 +468,23 @@
     </div>
   </section>
 
-  <!-- PRODUITS horizontal -->
-  <section id="produits" class="h-scroll" data-hscroll>
-    <div class="h-sticky">
-      <div class="h-head">
-        <h2>Du fournil à la vitrine.</h2>
-        <span class="h-hint">Scroll → la vitrine défile</span>
-      </div>
-      <div class="h-track" data-htrack>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=640&q=70" alt="Pains de tradition" loading="lazy" decoding="async" /><span class="h-num">01</span><span class="h-tag">Pains &amp; tradition</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=640&q=70" alt="Croissants pur beurre" loading="lazy" decoding="async" /><span class="h-num">02</span><span class="h-tag">Viennoiseries</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=640&q=70" alt="Tartes et pâtisseries" loading="lazy" decoding="async" /><span class="h-num">03</span><span class="h-tag">Pâtisserie</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=640&q=70" alt="Sandwichs frais" loading="lazy" decoding="async" /><span class="h-num">04</span><span class="h-tag">Sandwichs</span></div>
-        <div class="h-card"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=640&q=70" alt="Gâteaux maison" loading="lazy" decoding="async" /><span class="h-num">05</span><span class="h-tag">Gâteaux maison</span></div>
-      </div>
+  <!-- PRODUITS vitrine auto-défilante -->
+  <section id="produits" class="h-scroll">
+    <div class="h-head">
+      <h2>Du fournil à la vitrine.</h2>
+      <span class="h-hint">La vitrine défile · cliquez une photo</span>
+    </div>
+    <div class="h-track">
+      <div class="h-card"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=640&q=70" alt="Pains de tradition" loading="lazy" decoding="async" /><span class="h-num">01</span><span class="h-tag">Pains &amp; tradition</span></div>
+      <div class="h-card"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=640&q=70" alt="Croissants pur beurre" loading="lazy" decoding="async" /><span class="h-num">02</span><span class="h-tag">Viennoiseries</span></div>
+      <div class="h-card"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=640&q=70" alt="Tartes et pâtisseries" loading="lazy" decoding="async" /><span class="h-num">03</span><span class="h-tag">Pâtisserie</span></div>
+      <div class="h-card"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=640&q=70" alt="Sandwichs frais" loading="lazy" decoding="async" /><span class="h-num">04</span><span class="h-tag">Sandwichs</span></div>
+      <div class="h-card"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=640&q=70" alt="Gâteaux maison" loading="lazy" decoding="async" /><span class="h-num">05</span><span class="h-tag">Gâteaux maison</span></div>
+      <div class="h-card" aria-hidden="true"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=640&q=70" alt="" loading="lazy" decoding="async" /><span class="h-num">01</span><span class="h-tag">Pains &amp; tradition</span></div>
+      <div class="h-card" aria-hidden="true"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=640&q=70" alt="" loading="lazy" decoding="async" /><span class="h-num">02</span><span class="h-tag">Viennoiseries</span></div>
+      <div class="h-card" aria-hidden="true"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=640&q=70" alt="" loading="lazy" decoding="async" /><span class="h-num">03</span><span class="h-tag">Pâtisserie</span></div>
+      <div class="h-card" aria-hidden="true"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=640&q=70" alt="" loading="lazy" decoding="async" /><span class="h-num">04</span><span class="h-tag">Sandwichs</span></div>
+      <div class="h-card" aria-hidden="true"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=640&q=70" alt="" loading="lazy" decoding="async" /><span class="h-num">05</span><span class="h-tag">Gâteaux maison</span></div>
     </div>
   </section>
 
@@ -482,7 +496,7 @@
           <p class="eyebrow">Traiteur &amp; événements</p>
           <h2>Mariages, anniversaires : on régale aussi vos réceptions.</h2>
           <p>Service traiteur avec méchoui pour vos grandes occasions. Un savoir-faire qui distingue la maison, en plus du pain et de la pâtisserie du quotidien.</p>
-          <a href="tel:+33100000000" class="btn" data-hover>Demander un devis</a>
+          <a href="tel:+33967393761" class="btn" data-hover>Demander un devis</a>
         </div>
         <div class="band-big">Méchoui<small>La spécialité événements de la maison</small></div>
       </div>
@@ -526,7 +540,7 @@
       </table>
       <ul class="contact-list reveal" data-reveal-delay="100">
         <li><span class="ico">📍</span> <a href="https://www.google.com/maps/dir/?api=1&destination=18+Rue+Henri+Thirard,+94240+L'Haÿ-les-Roses" target="_blank" rel="noopener" data-hover>18 Rue Henri Thirard, 94240 L'Haÿ-les-Roses</a></li>
-        <li><span class="ico">📞</span> <a href="tel:+33100000000" data-hover>01 00 00 00 00 <em style="font-style:normal;font-weight:400;color:var(--muted);font-size:.8rem">(à confirmer)</em></a></li>
+        <li><span class="ico">📞</span> <a href="tel:+33967393761" data-hover>09 67 39 37 61</a></li>
         <li><span class="ico">♿</span> Accès adapté PMR</li>
         <li><span class="ico">💳</span> CB &amp; sans contact</li>
       </ul>
@@ -545,7 +559,7 @@
 <footer class="mega-footer">
   <div class="wrap cta-line">
     <h2 class="mask-title"><span>Le pain frais vous attend, à deux pas de chez vous.</span></h2>
-    <a href="tel:+33100000000" class="btn" data-hover>📞 Appeler la boulangerie</a>
+    <a href="tel:+33967393761" class="btn" data-hover>📞 Appeler la boulangerie</a>
   </div>
   <div class="giant" aria-hidden="true">Apollo</div>
   <div class="wrap foot-bottom">
@@ -554,7 +568,7 @@
   </div>
 </footer>
 
-<a href="tel:+33100000000" class="btn fab" aria-label="Appeler">📞 Appeler</a>
+<a href="tel:+33967393761" class="btn fab" aria-label="Appeler">📞 Appeler</a>
 
 <script>
 document.getElementById('y').textContent = new Date().getFullYear();
@@ -617,8 +631,6 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
   var header = document.querySelector('[data-header]');
   var progress = document.querySelector('[data-progress]');
-  var hsection = document.querySelector('[data-hscroll]');
-  var htrack = document.querySelector('[data-htrack]');
   var statement = document.querySelector('[data-statement]');
   var words = [];
 
@@ -642,16 +654,6 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     words = statement.querySelectorAll('.sw');
   }
 
-  /* hauteur virtuelle section horizontale */
-  function sizeH(){
-    if(!hsection||!htrack) return;
-    if(reduced) return;
-    var extra = htrack.scrollWidth - window.innerWidth;
-    hsection.style.height = (window.innerHeight + Math.max(extra,0)) + 'px';
-  }
-  sizeH();
-  window.addEventListener('resize', sizeH);
-
   function onScroll(){
     var sy = window.scrollY;
     header.classList.toggle('scrolled', sy>60);
@@ -660,16 +662,6 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     progress.style.width = (max>0 ? (sy/max)*100 : 0)+'%';
 
     if(!reduced){
-      if(hsection && htrack){
-        var r = hsection.getBoundingClientRect();
-        var total = hsection.offsetHeight - window.innerHeight;
-        if(total>0){
-          var prog = Math.min(Math.max(-r.top/total,0),1);
-          var extra = htrack.scrollWidth - window.innerWidth;
-          htrack.style.transform = 'translate3d('+(-prog*extra)+'px,0,0)';
-        }
-      }
-
       if(statement && words.length){
         var sr = statement.getBoundingClientRect();
         var startAt = window.innerHeight*.85, endAt = window.innerHeight*.35;
@@ -727,6 +719,28 @@ var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     },{threshold:.5});
     counters.forEach(function(c){ cio.observe(c); });
   }
+})();
+
+/* ---- Lightbox : cliquer une photo l'agrandit ---- */
+(function(){
+  var lb = document.createElement('div');
+  lb.className = 'lightbox';
+  lb.innerHTML = '<button class="lb-close" aria-label="Fermer">×</button><img alt="" />';
+  document.body.appendChild(lb);
+  var big = lb.querySelector('img');
+  function open(src, alt){
+    big.src = src.replace('w=640','w=1200');
+    big.alt = alt || '';
+    lb.classList.add('on');
+  }
+  function close(){ lb.classList.remove('on'); }
+  document.querySelectorAll('.h-card, .img-reveal, .hero-media').forEach(function(box){
+    var im = box.querySelector('img');
+    if(!im) return;
+    box.addEventListener('click', function(){ open(im.currentSrc || im.src, im.alt); });
+  });
+  lb.addEventListener('click', close);
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') close(); });
 })();
 </script>
 </body>
