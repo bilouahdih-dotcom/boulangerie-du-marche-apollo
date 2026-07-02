@@ -11,7 +11,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,800;9..144,900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
 <script type="application/ld+json">
 {
@@ -33,345 +33,521 @@
 </script>
 
 <style>
-  :root {
-    --bg: #faf3e6;
-    --surface: #fffaf1;
-    --ink: #35261a;
-    --muted: #7d6b58;
-    --accent: #c05a35;
-    --accent-2: #e08a4f;
-    --accent-ink: #fff6ee;
-    --sage: #7d8f5c;
-    --line: rgba(53,38,26,.10);
-    --radius: 22px;
-    --ease: cubic-bezier(.16,1,.3,1);
-    --maxw: 1180px;
+  :root{
+    --bg:#f6efe3;
+    --surface:#fdf8ee;
+    --ink:#231710;
+    --ink-soft:#4a382a;
+    --muted:#8a7864;
+    --accent:#c05a35;
+    --gold:#d9a05b;
+    --cream:#f6ead9;
+    --line:rgba(35,23,16,.12);
+    --ease:cubic-bezier(.16,1,.3,1);
+    --maxw:1240px;
   }
 
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{
     font-family:'Manrope',system-ui,sans-serif;
-    color:var(--ink);
-    background:var(--bg);
-    line-height:1.7;
-    -webkit-font-smoothing:antialiased;
+    background:var(--bg);color:var(--ink);
+    line-height:1.7;-webkit-font-smoothing:antialiased;
     overflow-x:hidden;
   }
-  h1,h2,h3{font-family:'Fraunces',Georgia,serif;line-height:1.04;letter-spacing:-.02em;font-weight:800;}
+  body.locked{overflow:hidden;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;line-height:1;letter-spacing:-.02em;font-weight:900;}
   a{color:inherit;text-decoration:none;}
   img{max-width:100%;display:block;}
-  .wrap{width:min(100% - 2.5rem, var(--maxw));margin-inline:auto;}
-  .accent{color:var(--accent);}
-  ::selection{background:var(--accent);color:var(--accent-ink);}
+  .wrap{width:min(100% - 2.5rem,var(--maxw));margin-inline:auto;}
+  ::selection{background:var(--accent);color:var(--cream);}
 
-  /* Grain overlay global */
+  /* Grain */
   body::after{
-    content:'';position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.035;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    content:'';position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .btn{
-    display:inline-flex;align-items:center;gap:.5rem;
-    padding:.95rem 1.7rem;
-    background:var(--accent);color:var(--accent-ink);
-    font-weight:700;font-size:.95rem;border-radius:999px;
-    transition:transform .4s var(--ease), box-shadow .4s var(--ease), background .3s;
-    box-shadow:0 1px 2px rgba(53,38,26,.15), 0 14px 28px rgba(192,90,53,.28);
+  /* ===== Preloader ===== */
+  .preloader{
+    position:fixed;inset:0;z-index:1200;background:var(--ink);color:var(--cream);
+    display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+    transition:transform 1s var(--ease);
   }
-  .btn:hover{transform:translateY(-3px);box-shadow:0 1px 2px rgba(53,38,26,.15), 0 20px 34px rgba(192,90,53,.36);}
-  .btn:active{transform:translateY(-1px);}
-  .btn-ghost{background:rgba(255,250,241,.6);color:var(--ink);box-shadow:none;border:1.5px solid var(--line);backdrop-filter:blur(6px);}
-  .btn-ghost:hover{border-color:var(--ink);background:var(--surface);}
+  .preloader.done{transform:translateY(-101%);}
+  .preloader .pl-name{font-family:'Fraunces';font-weight:900;font-size:clamp(1.8rem,6vw,3.4rem);overflow:hidden;}
+  .preloader .pl-name span{display:inline-block;transform:translateY(110%);animation:plrise .9s var(--ease) forwards;}
+  @keyframes plrise{to{transform:none;}}
+  .preloader .pl-count{font-size:.85rem;letter-spacing:.35em;color:var(--gold);font-weight:700;}
 
-  /* Header */
+  /* ===== Curseur custom ===== */
+  .cursor-dot,.cursor-ring{position:fixed;top:0;left:0;z-index:1100;pointer-events:none;border-radius:50%;transform:translate(-50%,-50%);}
+  .cursor-dot{width:8px;height:8px;background:var(--accent);}
+  .cursor-ring{width:38px;height:38px;border:1.5px solid rgba(192,90,53,.6);transition:width .3s var(--ease),height .3s var(--ease),background .3s;}
+  .cursor-ring.grow{width:70px;height:70px;background:rgba(192,90,53,.12);}
+  @media (pointer:coarse){.cursor-dot,.cursor-ring{display:none;}}
+
+  /* Progress bar */
+  .scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--gold));z-index:1000;}
+
+  /* ===== Header ===== */
   .site-header{
-    position:fixed;inset:0 0 auto 0;z-index:50;
+    position:fixed;inset:0 0 auto 0;z-index:900;
     display:flex;align-items:center;justify-content:space-between;
-    padding:1.4rem 2.5rem;
-    transition:background .4s var(--ease), padding .4s var(--ease), box-shadow .4s var(--ease);
+    padding:1.3rem 2.2rem;mix-blend-mode:normal;
+    transition:background .4s var(--ease),padding .4s var(--ease),box-shadow .4s;
   }
-  .site-header.scrolled{background:rgba(250,243,230,.72);backdrop-filter:blur(16px) saturate(1.4);padding:.9rem 2.5rem;box-shadow:0 1px 0 var(--line);}
-  .logo{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:800;display:flex;flex-direction:column;line-height:1.05;}
-  .logo small{font-family:'Manrope';font-weight:600;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);}
-  .nav{display:flex;gap:2.2rem;align-items:center;}
-  .nav a:not(.btn){color:var(--muted);font-weight:600;font-size:.92rem;position:relative;transition:color .3s;}
-  .nav a:not(.btn)::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:1.5px;background:var(--accent);transition:width .35s var(--ease);}
-  .nav a:not(.btn):hover{color:var(--ink);}
-  .nav a:not(.btn):hover::after{width:100%;}
-  .burger{display:none;background:none;border:none;cursor:pointer;padding:.4rem;z-index:60;}
-  .burger span{display:block;width:24px;height:2px;background:var(--ink);margin:5px 0;transition:transform .35s var(--ease), opacity .3s;}
-  .nav.open ~ .burger span:nth-child(1),.burger.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
-  .burger.active span:nth-child(2){opacity:0;}
-  .burger.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  .site-header.scrolled{background:rgba(246,239,227,.75);backdrop-filter:blur(16px) saturate(1.4);padding:.85rem 2.2rem;box-shadow:0 1px 0 var(--line);}
+  .logo{font-family:'Fraunces';font-weight:900;font-size:1.25rem;line-height:1;display:flex;flex-direction:column;z-index:960;}
+  .logo small{font-family:'Manrope';font-weight:700;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);}
+  .hero .logo, .site-header:not(.scrolled) .logo{color:var(--cream);}
+  .site-header.scrolled .logo{color:var(--ink);}
+  .header-right{display:flex;align-items:center;gap:1.4rem;z-index:960;}
+  .call-pill{
+    display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.3rem;border-radius:999px;
+    background:var(--accent);color:var(--cream);font-weight:700;font-size:.85rem;
+    box-shadow:0 10px 24px rgba(192,90,53,.35);transition:transform .35s var(--ease);
+  }
+  .call-pill:hover{transform:translateY(-2px) scale(1.03);}
+  .menu-btn{
+    display:flex;align-items:center;gap:.7rem;background:none;border:none;cursor:pointer;
+    font-family:'Manrope';font-weight:800;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--cream);transition:color .3s;
+  }
+  .site-header.scrolled .menu-btn{color:var(--ink);}
+  .menu-btn .bars{display:flex;flex-direction:column;gap:5px;}
+  .menu-btn .bars span{width:26px;height:2px;background:currentColor;transition:transform .35s var(--ease),opacity .3s;}
+  body.menu-open .menu-btn{color:var(--cream);}
+  body.menu-open .menu-btn .bars span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+  body.menu-open .menu-btn .bars span:nth-child(2){opacity:0;}
+  body.menu-open .menu-btn .bars span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+  body.menu-open .logo{color:var(--cream)!important;}
 
-  /* Hero + mesh gradient */
-  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;padding:9rem 0 4rem;}
-  .mesh{position:absolute;inset:-20%;z-index:-2;filter:blur(60px);opacity:.9;}
-  .blob{position:absolute;border-radius:50%;mix-blend-mode:multiply;animation:float 16s var(--ease) infinite alternate;}
-  .blob.b1{width:46vw;height:46vw;background:radial-gradient(circle,#f0b27a,transparent 70%);top:-6%;left:-4%;}
-  .blob.b2{width:40vw;height:40vw;background:radial-gradient(circle,#e08a4f,transparent 70%);bottom:-10%;right:2%;animation-delay:-4s;}
-  .blob.b3{width:32vw;height:32vw;background:radial-gradient(circle,#cdd6ac,transparent 70%);top:30%;right:28%;animation-delay:-8s;}
-  @keyframes float{from{transform:translate(0,0) scale(1);}to{transform:translate(4%,6%) scale(1.15);}}
-  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:3rem;align-items:center;}
-  .hero-media{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;box-shadow:0 1px 2px rgba(53,38,26,.06), 0 30px 60px -12px rgba(53,38,26,.4);transform:rotate(1.4deg);}
-  .hero-media img{width:100%;height:100%;object-fit:cover;animation:slowzoom 20s ease-in-out infinite alternate;}
-  @keyframes slowzoom{from{transform:scale(1);}to{transform:scale(1.1);}}
-  .hero-badge{position:absolute;left:-1.2rem;bottom:1.6rem;background:rgba(255,250,241,.75);backdrop-filter:blur(10px);border-radius:999px;padding:.9rem 1.3rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 1px 2px rgba(53,38,26,.08), 0 16px 30px rgba(53,38,26,.18);transform:rotate(-3deg);font-weight:700;font-size:.85rem;}
-  .hero-badge .stars{color:var(--accent);letter-spacing:1px;}
-  .hero h1{font-size:clamp(2.6rem, 5.4vw, 4.4rem);max-width:13ch;}
-  .hero h1 .w{display:inline-block;opacity:0;transform:translateY(24px);animation:rise .7s var(--ease) forwards;}
-  @keyframes rise{to{opacity:1;transform:none;}}
-  .hero p.lede{color:var(--muted);font-size:1.15rem;max-width:38ch;margin:1.3rem 0 2rem;}
-  .hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;}
+  /* ===== Menu overlay plein écran ===== */
+  .menu-overlay{
+    position:fixed;inset:0;z-index:940;background:#1a100a;color:var(--cream);
+    clip-path:circle(0% at calc(100% - 3rem) 2.5rem);
+    transition:clip-path .9s var(--ease);
+    display:flex;align-items:center;
+  }
+  body.menu-open .menu-overlay{clip-path:circle(150% at calc(100% - 3rem) 2.5rem);}
+  .menu-inner{width:min(100% - 3rem,1100px);margin-inline:auto;display:grid;grid-template-columns:1.3fr .7fr;gap:3rem;align-items:center;}
+  .menu-links{list-style:none;display:flex;flex-direction:column;gap:.4rem;counter-reset:m;}
+  .menu-links a{
+    font-family:'Fraunces';font-weight:900;font-size:clamp(2.2rem,7vw,4.6rem);line-height:1.08;
+    display:inline-flex;align-items:baseline;gap:1.1rem;
+    opacity:0;transform:translateY(40px);transition:opacity .6s var(--ease),transform .6s var(--ease),color .3s;
+  }
+  body.menu-open .menu-links a{opacity:1;transform:none;}
+  .menu-links li:nth-child(1) a{transition-delay:.15s}.menu-links li:nth-child(2) a{transition-delay:.22s}
+  .menu-links li:nth-child(3) a{transition-delay:.29s}.menu-links li:nth-child(4) a{transition-delay:.36s}
+  .menu-links li:nth-child(5) a{transition-delay:.43s}
+  .menu-links a::before{counter-increment:m;content:"0" counter(m);font-family:'Manrope';font-size:.85rem;font-weight:700;color:var(--gold);letter-spacing:.1em;}
+  .menu-links a:hover{color:var(--gold);}
+  .menu-aside{color:#c9b49a;font-size:.95rem;opacity:0;transition:opacity .6s .5s;}
+  body.menu-open .menu-aside{opacity:1;}
+  .menu-aside b{color:var(--cream);display:block;margin-bottom:.3rem;}
+  .menu-aside p+p{margin-top:1.4rem;}
 
-  /* Marquee */
-  .marquee{background:var(--ink);color:#f6ead9;padding:1.1rem 0;overflow:hidden;white-space:nowrap;border-block:1px solid rgba(0,0,0,.2);}
-  .marquee-track{display:inline-flex;gap:3rem;animation:scroll 28s linear infinite;font-family:'Fraunces';font-style:italic;font-weight:600;font-size:1.2rem;}
-  .marquee-track span{display:inline-flex;align-items:center;gap:3rem;}
-  .marquee-track b{color:var(--accent-2);font-style:normal;}
-  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  /* ===== Hero ===== */
+  .hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;color:var(--cream);}
+  .hero-bg{position:absolute;inset:-12% 0;z-index:-2;will-change:transform;}
+  .hero-bg img{width:100%;height:100%;object-fit:cover;transform:scale(1.15);animation:heroZoom 2.6s var(--ease) forwards;}
+  @keyframes heroZoom{to{transform:scale(1.02);}}
+  .hero::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(to top,rgba(20,12,7,.92) 0%,rgba(20,12,7,.35) 45%,rgba(20,12,7,.55) 100%);}
+  .hero-content{padding:0 0 4.5rem;}
+  .hero .eyebrow-hero{
+    display:flex;align-items:center;gap:.8rem;font-weight:700;font-size:.8rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);
+    opacity:0;animation:fadein 1s .9s forwards;
+  }
+  .hero .eyebrow-hero::before{content:'';width:38px;height:1.5px;background:var(--gold);}
+  @keyframes fadein{to{opacity:1;}}
+  .hero-title{font-size:clamp(3.4rem,13vw,11.5rem);text-transform:uppercase;letter-spacing:-.03em;margin:.6rem 0 1rem;}
+  .hero-title .line{display:block;overflow:hidden;}
+  .hero-title .ch{display:inline-block;transform:translateY(115%) rotate(4deg);animation:chrise 1s var(--ease) forwards;animation-delay:var(--d);}
+  @keyframes chrise{to{transform:none;}}
+  .hero-sub{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;opacity:0;animation:fadein 1s 1.5s forwards;}
+  .hero-sub p{max-width:40ch;color:#e8d9c4;font-size:1.05rem;}
+  .hero-ctas{display:flex;gap:.9rem;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:.5rem;padding:1rem 1.8rem;border-radius:999px;
+    background:var(--accent);color:var(--cream);font-weight:700;font-size:.95rem;
+    box-shadow:0 14px 30px rgba(192,90,53,.35);
+    transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+  }
+  .btn:hover{transform:translateY(-3px);box-shadow:0 22px 40px rgba(192,90,53,.45);}
+  .btn-ghost{background:rgba(246,234,217,.12);border:1.5px solid rgba(246,234,217,.4);backdrop-filter:blur(8px);box-shadow:none;}
+  .btn-ghost:hover{background:rgba(246,234,217,.22);}
+  .hero-meta{
+    position:absolute;right:2.2rem;bottom:4.5rem;display:flex;flex-direction:column;gap:.3rem;text-align:right;
+    font-size:.8rem;color:#cdb99e;opacity:0;animation:fadein 1s 1.8s forwards;
+  }
+  .hero-meta b{color:var(--gold);font-size:1rem;}
+  .scroll-hint{
+    position:absolute;left:50%;bottom:1.2rem;transform:translateX(-50%);
+    font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:#cdb99e;
+    display:flex;flex-direction:column;align-items:center;gap:.5rem;opacity:0;animation:fadein 1s 2s forwards;
+  }
+  .scroll-hint::after{content:'';width:1px;height:34px;background:linear-gradient(var(--gold),transparent);animation:drip 1.6s ease-in-out infinite;}
+  @keyframes drip{50%{transform:scaleY(.4);transform-origin:top;}}
 
-  section{padding:6.5rem 0;position:relative;}
-  .eyebrow{display:flex;align-items:center;gap:.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:.2em;font-size:.78rem;font-weight:700;margin-bottom:1.1rem;}
-  .eyebrow::before{content:'';width:28px;height:1.5px;background:var(--accent);}
-  .section-title{font-size:clamp(2rem, 4.6vw, 3rem);margin-bottom:1.2rem;max-width:16ch;}
-  .reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease), transform .8s var(--ease);}
+  /* ===== Marquee ===== */
+  .marquee{background:var(--accent);color:var(--cream);padding:1rem 0;overflow:hidden;white-space:nowrap;transform:rotate(-1.2deg) scale(1.02);margin:-1rem 0;position:relative;z-index:5;box-shadow:0 14px 30px rgba(35,23,16,.18);}
+  .marquee-track{display:inline-flex;animation:scroll 24s linear infinite;font-family:'Fraunces';font-style:italic;font-weight:700;font-size:1.15rem;}
+  .marquee-track span{display:inline-flex;align-items:center;gap:2.6rem;padding-right:2.6rem;}
+  .marquee-track i{font-style:normal;color:var(--gold);}
+  @keyframes scroll{to{transform:translateX(-50%);}}
+
+  section{padding:7.5rem 0;position:relative;}
+  .eyebrow{display:flex;align-items:center;gap:.7rem;color:var(--accent);text-transform:uppercase;letter-spacing:.22em;font-size:.75rem;font-weight:800;margin-bottom:1.2rem;}
+  .eyebrow::before{content:'';width:30px;height:1.5px;background:var(--accent);}
+
+  /* Titres avec masque */
+  .mask-title{overflow:hidden;}
+  .mask-title span{display:block;transform:translateY(110%);transition:transform 1s var(--ease);}
+  .mask-title.is-visible span{transform:none;}
+
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease);}
   .reveal.is-visible{opacity:1;transform:none;}
 
-  /* About */
-  .about-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:4rem;align-items:center;}
+  /* ===== Statement : mots qui s'allument au scroll ===== */
+  .statement{padding:9rem 0;}
+  .statement p{
+    font-family:'Fraunces';font-weight:700;font-size:clamp(1.7rem,4.4vw,3.4rem);
+    line-height:1.28;letter-spacing:-.01em;max-width:24ch;
+  }
+  .statement .sw{opacity:.13;transition:opacity .35s ease;}
+  .statement .sw.lit{opacity:1;}
+  .statement .hl{color:var(--accent);}
+
+  /* ===== About + compteurs ===== */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center;}
+  .img-reveal{border-radius:26px;overflow:hidden;position:relative;box-shadow:0 30px 60px -14px rgba(35,23,16,.4);}
+  .img-reveal img{clip-path:inset(0 0 100% 0);transform:scale(1.28);transition:clip-path 1.2s var(--ease),transform 1.6s var(--ease);width:100%;height:100%;object-fit:cover;}
+  .img-reveal.is-visible img{clip-path:inset(0);transform:scale(1);}
   .about-media{position:relative;}
-  .about-media img{border-radius:var(--radius);box-shadow:0 1px 2px rgba(53,38,26,.06), 0 24px 50px -10px rgba(53,38,26,.3);}
-  .about-num{position:absolute;top:-1.6rem;right:-1.6rem;width:96px;height:96px;border-radius:50%;background:var(--sage);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Fraunces';font-weight:800;font-size:1.5rem;line-height:1;box-shadow:0 14px 26px rgba(125,143,92,.35);}
-  .about-num span{font-family:'Manrope';font-weight:700;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem;}
-  .about-text p{color:var(--muted);max-width:48ch;font-size:1.05rem;}
-  .about-text p + p{margin-top:1.1rem;}
+  .about-sticker{
+    position:absolute;top:-1.8rem;right:-1.2rem;width:110px;height:110px;border-radius:50%;
+    background:var(--gold);color:#3a2412;display:flex;align-items:center;justify-content:center;text-align:center;
+    font-family:'Fraunces';font-weight:900;font-size:.85rem;line-height:1.2;padding:1rem;
+    box-shadow:0 16px 30px rgba(217,160,91,.4);animation:spin 14s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .about-text .lead{color:var(--ink-soft);font-size:1.08rem;max-width:46ch;}
+  .about-text .lead+.lead{margin-top:1.1rem;}
+  .stats{display:flex;gap:3rem;margin-top:2.8rem;flex-wrap:wrap;}
+  .stat b{font-family:'Fraunces';font-weight:900;font-size:clamp(2.4rem,5vw,3.6rem);color:var(--accent);line-height:1;display:flex;align-items:baseline;}
+  .stat b em{font-style:normal;font-size:.55em;color:var(--gold);}
+  .stat span{font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
 
-  /* Produits bento + spotlight */
-  .products{background:var(--surface);border-block:1px solid var(--line);}
-  .product-grid{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:220px;gap:1.2rem;margin-top:3rem;}
-  .p-card{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 2px rgba(53,38,26,.06), 0 10px 24px rgba(53,38,26,.12);transition:transform .5s var(--ease), box-shadow .5s var(--ease);}
-  .p-card::after{content:'';position:absolute;inset:0;z-index:3;opacity:0;transition:opacity .4s;background:radial-gradient(200px circle at var(--mx,50%) var(--my,50%), rgba(255,220,170,.35), transparent 60%);}
-  .p-card:hover::after{opacity:1;}
-  .p-card:hover{transform:translateY(-6px);box-shadow:0 1px 2px rgba(53,38,26,.08), 0 26px 44px rgba(53,38,26,.22);}
-  .p-card img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease);}
-  .p-card:hover img{transform:scale(1.07);}
-  .p-card .tag{position:absolute;left:1rem;bottom:1rem;z-index:4;background:rgba(250,243,230,.9);backdrop-filter:blur(6px);padding:.5rem 1rem;border-radius:999px;font-weight:700;font-size:.85rem;}
-  .p-card--big{grid-column:span 3;grid-row:span 2;}
-  .p-card--tall{grid-column:span 2;grid-row:span 2;}
-  .p-card--reg{grid-column:span 2;}
-  .p-card--wide{grid-column:span 3;}
+  /* ===== Section horizontale produits ===== */
+  .h-scroll{padding:0;background:var(--ink);color:var(--cream);}
+  .h-sticky{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;}
+  .h-head{padding:3.2rem 2.2rem 2rem;display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;}
+  .h-head h2{font-size:clamp(2rem,5vw,3.6rem);color:var(--cream);}
+  .h-head .h-hint{font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);font-weight:700;white-space:nowrap;}
+  .h-track{display:flex;gap:1.6rem;padding:0 2.2rem 3rem;will-change:transform;}
+  .h-card{
+    flex:0 0 clamp(300px,34vw,460px);border-radius:24px;overflow:hidden;position:relative;aspect-ratio:3.4/4;
+    background:#312115;
+  }
+  .h-card img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease);}
+  .h-card:hover img{transform:scale(1.08);}
+  .h-card .h-tag{
+    position:absolute;left:1.3rem;bottom:1.3rem;z-index:2;
+    font-family:'Fraunces';font-weight:900;font-size:1.5rem;color:var(--cream);
+    text-shadow:0 4px 20px rgba(0,0,0,.5);
+  }
+  .h-card .h-num{position:absolute;top:1.1rem;right:1.3rem;z-index:2;font-weight:800;font-size:.8rem;color:var(--gold);letter-spacing:.15em;}
+  .h-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(20,12,7,.55),transparent 55%);}
 
-  /* Traiteur band */
-  .band{background:linear-gradient(120deg, var(--ink), #4a3624);color:#f6ead9;border-radius:var(--radius);padding:5rem 3rem;position:relative;overflow:hidden;}
-  .band::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 85% 20%, rgba(192,90,53,.4), transparent 55%);}
-  .band-inner{position:relative;display:grid;grid-template-columns:1.3fr .7fr;gap:3rem;align-items:center;}
-  .band h2{color:#fff;font-size:clamp(1.8rem,4vw,2.6rem);max-width:16ch;}
-  .band p{color:#d8c7b3;margin-top:1rem;max-width:44ch;}
-  .band .btn{background:var(--accent-ink);color:var(--ink);}
-  .band-stat{text-align:right;}
-  .band-stat b{display:block;font-family:'Fraunces';font-size:clamp(3rem,7vw,4.5rem);font-weight:900;color:var(--accent-2);line-height:1;}
-  .band-stat span{color:#d8c7b3;font-weight:600;font-size:.9rem;}
+  /* ===== Traiteur ===== */
+  .traiteur{overflow:hidden;}
+  .band{
+    background:linear-gradient(120deg,#2b1a0f,#4a3222);color:var(--cream);border-radius:28px;
+    padding:5.5rem 3.5rem;position:relative;overflow:hidden;
+  }
+  .band::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 88% 15%,rgba(217,160,91,.35),transparent 55%);}
+  .band-inner{position:relative;display:grid;grid-template-columns:1.25fr .75fr;gap:3rem;align-items:center;}
+  .band h2{color:#fff;font-size:clamp(1.9rem,4.4vw,2.9rem);max-width:15ch;}
+  .band p{color:#d9c6ad;margin-top:1.2rem;max-width:44ch;}
+  .band .eyebrow{color:var(--gold);}
+  .band .eyebrow::before{background:var(--gold);}
+  .band .btn{background:var(--cream);color:var(--ink);margin-top:1.8rem;}
+  .band-big{font-family:'Fraunces';font-weight:900;font-size:clamp(4rem,10vw,7rem);color:transparent;-webkit-text-stroke:1.5px var(--gold);line-height:.95;text-align:right;}
+  .band-big small{display:block;-webkit-text-stroke:0;color:#d9c6ad;font-family:'Manrope';font-weight:700;font-size:.85rem;letter-spacing:.1em;margin-top:.8rem;}
 
-  /* Avis */
-  .quote{font-family:'Fraunces';font-weight:600;font-style:italic;font-size:clamp(1.5rem,3.4vw,2.3rem);line-height:1.35;max-width:26ch;position:relative;padding-left:2.5rem;}
-  .quote::before{content:'"';position:absolute;left:-.3rem;top:-1.2rem;font-size:5rem;color:var(--accent);opacity:.5;font-family:'Fraunces';}
-  .reviews-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-top:1rem;}
-  .review-cards{display:flex;flex-direction:column;gap:1.2rem;}
-  .review-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:1.6rem 1.8rem;transition:transform .4s var(--ease), box-shadow .4s var(--ease);}
-  .review-card:hover{transform:translateX(4px);box-shadow:0 14px 30px rgba(53,38,26,.12);}
-  .review-card .stars{color:var(--accent);letter-spacing:2px;font-size:.9rem;margin-bottom:.5rem;}
-  .review-card p{color:var(--muted);font-size:.95rem;}
-  .review-card cite{display:block;margin-top:.7rem;font-weight:700;font-style:normal;font-size:.85rem;}
+  /* ===== Avis double marquee ===== */
+  .reviews{background:var(--surface);border-block:1px solid var(--line);padding:6rem 0;overflow:hidden;}
+  .reviews .eyebrow{justify-content:center;}
+  .reviews .eyebrow::before{display:none;}
+  .reviews h2{text-align:center;font-size:clamp(2rem,4.6vw,3.2rem);margin-bottom:3rem;}
+  .rev-row{display:flex;gap:1.4rem;width:max-content;margin-bottom:1.4rem;animation:scroll 36s linear infinite;}
+  .rev-row.reverse{animation-direction:reverse;}
+  .rev-row:hover{animation-play-state:paused;}
+  .rev-card{
+    width:380px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:1.5rem 1.7rem;
+    box-shadow:0 8px 20px rgba(35,23,16,.06);
+  }
+  .rev-card .stars{color:var(--accent);letter-spacing:2px;font-size:.85rem;}
+  .rev-card p{color:var(--ink-soft);font-size:.92rem;margin:.5rem 0;}
+  .rev-card cite{font-weight:800;font-style:normal;font-size:.8rem;color:var(--muted);}
 
-  /* Infos + Maps */
-  .infos{background:var(--surface);border-block:1px solid var(--line);}
+  /* ===== Infos + Maps ===== */
   .infos-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:3.5rem;}
-  .hours-table{width:100%;border-collapse:collapse;margin-top:1.5rem;}
+  .hours-table{width:100%;border-collapse:collapse;margin-top:1.6rem;}
   .hours-table tr{border-bottom:1px solid var(--line);}
-  .hours-table tr:last-child{border-bottom:none;}
-  .hours-table td{padding:.85rem .2rem;font-size:.98rem;}
-  .hours-table td:first-child{font-weight:700;}
+  .hours-table td{padding:.9rem .2rem;font-size:1rem;}
+  .hours-table td:first-child{font-weight:800;}
   .hours-table td:last-child{text-align:right;color:var(--muted);}
-  .hours-table tr.open td{color:var(--accent);font-weight:700;}
+  .hours-table tr.open td{color:var(--accent);font-weight:800;}
   .contact-list{list-style:none;margin-top:1.8rem;display:flex;flex-direction:column;gap:1rem;}
-  .contact-list li{display:flex;align-items:center;gap:.9rem;font-weight:600;}
-  .contact-list .ico{width:42px;height:42px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.05rem;}
-  .map-wrap{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 2px rgba(53,38,26,.06), 0 24px 50px -10px rgba(53,38,26,.28);}
-  .map-frame{aspect-ratio:16/12;border:0;width:100%;display:block;filter:saturate(.9) contrast(1.02);}
-  .map-cta{position:absolute;left:1rem;bottom:1rem;z-index:2;}
+  .contact-list li{display:flex;align-items:center;gap:.9rem;font-weight:700;}
+  .contact-list .ico{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .map-wrap{position:relative;border-radius:26px;overflow:hidden;box-shadow:0 26px 55px -12px rgba(35,23,16,.35);}
+  .map-frame{aspect-ratio:16/12;border:0;width:100%;display:block;filter:saturate(.92) contrast(1.03);}
+  .map-cta{position:absolute;left:1.1rem;bottom:1.1rem;z-index:2;}
 
-  /* CTA final */
-  .final-cta{text-align:center;}
-  .final-cta h2{font-size:clamp(2.2rem,6vw,3.6rem);max-width:18ch;margin-inline:auto;}
-  .final-cta .btn{margin-top:2rem;font-size:1.05rem;padding:1.1rem 2.2rem;}
-
-  footer{border-top:1px solid var(--line);padding:3rem 0;}
-  .foot-grid{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;color:var(--muted);font-size:.9rem;}
-  .foot-note{font-size:.78rem;opacity:.7;margin-top:.6rem;}
-
-  /* Bouton d'appel flottant mobile */
-  .fab{display:none;position:fixed;right:1.1rem;bottom:1.1rem;z-index:70;box-shadow:0 10px 30px rgba(192,90,53,.5);}
-
-  @media (max-width:860px){
-    .hero-grid, .about-grid, .infos-grid, .reviews-grid, .band-inner{grid-template-columns:1fr;}
-    .hero-media{order:-1;aspect-ratio:16/11;transform:none;margin-top:1rem;}
-    .about-num{right:auto;left:1rem;top:-1.2rem;}
-    .band-stat{text-align:left;}
-    .product-grid{grid-template-columns:repeat(2,1fr);grid-auto-rows:180px;}
-    .p-card--wide,.p-card--big{grid-column:span 2;}
-    .p-card--tall{grid-column:span 1;grid-row:span 1;}
-    .p-card--reg{grid-column:span 1;}
+  /* ===== Footer géant ===== */
+  .mega-footer{background:var(--ink);color:var(--cream);padding:6rem 0 2.5rem;overflow:hidden;}
+  .mega-footer .cta-line{text-align:center;}
+  .mega-footer .cta-line h2{color:var(--cream);font-size:clamp(2.2rem,6vw,4.2rem);max-width:18ch;margin-inline:auto;}
+  .mega-footer .btn{margin-top:2rem;font-size:1.05rem;padding:1.15rem 2.3rem;}
+  .giant{
+    font-family:'Fraunces';font-weight:900;text-transform:uppercase;text-align:center;
+    font-size:clamp(4rem,16vw,15rem);line-height:.85;margin-top:5rem;letter-spacing:-.02em;
+    color:transparent;-webkit-text-stroke:1.5px rgba(246,234,217,.28);user-select:none;white-space:nowrap;
   }
-  @media (max-width:720px){
-    .nav{position:fixed;inset:0 0 auto 0;background:rgba(250,243,230,.96);backdrop-filter:blur(14px);flex-direction:column;padding:6.5rem 2rem 2rem;gap:1.6rem;transform:translateY(-110%);transition:transform .5s var(--ease);height:100svh;align-items:flex-start;}
-    .nav.open{transform:translateY(0);}
-    .burger{display:block;}
-    .site-header,.site-header.scrolled{padding:1.1rem 1.4rem;}
+  .foot-bottom{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;color:#a8937a;font-size:.85rem;border-top:1px solid rgba(246,234,217,.12);margin-top:3.5rem;padding-top:1.8rem;}
+
+  .fab{display:none;position:fixed;right:1.1rem;bottom:1.1rem;z-index:950;box-shadow:0 12px 32px rgba(192,90,53,.55);}
+
+  @media (max-width:880px){
+    .about-grid,.infos-grid,.band-inner,.menu-inner{grid-template-columns:1fr;}
+    .band-big{text-align:left;}
+    .hero-meta{display:none;}
+    .h-card{flex-basis:74vw;}
+    .menu-aside{display:none;}
+    .band{padding:3.5rem 1.8rem;}
     .fab{display:inline-flex;}
+    .call-pill{display:none;}
+    .rev-card{width:300px;}
   }
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}.reveal{opacity:1;transform:none;}}
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important;}
+    .reveal,.mask-title span,.statement .sw{opacity:1;transform:none;}
+    .img-reveal img{clip-path:inset(0);transform:none;}
+    .preloader{display:none;}
+    .h-scroll{height:auto!important;}
+    .h-sticky{position:static;height:auto;}
+    .h-track{overflow-x:auto;transform:none!important;}
+    .hero-title .ch{transform:none;}
+  }
 </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- Preloader -->
+<div class="preloader" data-preloader>
+  <div class="pl-name"><span>Marché Apollo</span></div>
+  <div class="pl-count" data-count>0%</div>
+</div>
+
+<!-- Curseur -->
+<div class="cursor-dot" data-cdot></div>
+<div class="cursor-ring" data-cring></div>
+
+<div class="scroll-progress" data-progress></div>
 
 <header class="site-header" data-header>
   <a href="#" class="logo">Marché Apollo<small>Boulangerie · Pâtisserie</small></a>
-  <nav class="nav" data-nav>
-    <a href="#maison">La maison</a>
-    <a href="#produits">Nos produits</a>
-    <a href="#traiteur">Traiteur</a>
-    <a href="#avis">Avis</a>
-    <a href="#infos">Infos &amp; plan</a>
-    <a href="tel:+33100000000" class="btn">Nous appeler</a>
-  </nav>
-  <button class="burger" data-burger aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="header-right">
+    <a href="tel:+33100000000" class="call-pill" data-hover>📞 01 00 00 00 00</a>
+    <button class="menu-btn" data-menu-btn data-hover aria-label="Menu">
+      <span class="label">Menu</span>
+      <span class="bars"><span></span><span></span><span></span></span>
+    </button>
+  </div>
 </header>
+
+<!-- Menu overlay -->
+<nav class="menu-overlay" data-menu>
+  <div class="menu-inner">
+    <ul class="menu-links">
+      <li><a href="#maison" data-hover>La maison</a></li>
+      <li><a href="#produits" data-hover>Nos produits</a></li>
+      <li><a href="#traiteur" data-hover>Traiteur</a></li>
+      <li><a href="#avis" data-hover>Avis clients</a></li>
+      <li><a href="#infos" data-hover>Infos &amp; plan</a></li>
+    </ul>
+    <div class="menu-aside">
+      <p><b>Adresse</b>18 Rue Henri Thirard<br/>94240 L'Haÿ-les-Roses</p>
+      <p><b>Horaires</b>Mardi — Dimanche · 7h00 – 20h00<br/>Fermé le lundi</p>
+      <p><b>Contact</b><a href="tel:+33100000000">01 00 00 00 00</a> (à confirmer)</p>
+    </div>
+  </div>
+</nav>
 
 <main>
 
+  <!-- HERO -->
   <section class="hero">
-    <div class="mesh"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
-    <div class="wrap hero-grid">
-      <div>
-        <p class="eyebrow reveal">L'Haÿ-les-Roses · depuis 2010</p>
-        <h1 data-split>Le pain qui réveille tout le quartier.</h1>
-        <p class="lede reveal" data-reveal-delay="200">Pains au levain, viennoiseries pur beurre et pâtisserie maison, préparés chaque matin au 18 Rue Henri Thirard. Une maison de quartier, tenue avec cœur depuis plus de 15 ans.</p>
-        <div class="hero-ctas reveal" data-reveal-delay="300">
-          <a href="tel:+33100000000" class="btn">📞 Appeler la boutique</a>
-          <a href="#infos" class="btn btn-ghost">📍 Voir le plan</a>
+    <div class="hero-bg" data-parallax="0.25">
+      <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1800&q=80" alt="Pains artisanaux sortis du four" />
+    </div>
+    <div class="wrap hero-content">
+      <p class="eyebrow-hero">L'Haÿ-les-Roses · Depuis 2010</p>
+      <h1 class="hero-title" data-hero-title>
+        <span class="line">Marché</span>
+        <span class="line">Apollo</span>
+      </h1>
+      <div class="hero-sub">
+        <p>Pains au levain, viennoiseries pur beurre et pâtisserie maison — pétris et cuits sur place, chaque matin, depuis quinze ans.</p>
+        <div class="hero-ctas">
+          <a href="tel:+33100000000" class="btn" data-hover>📞 Appeler</a>
+          <a href="#infos" class="btn btn-ghost" data-hover>📍 Itinéraire</a>
         </div>
       </div>
-      <div class="hero-media reveal" data-reveal-delay="150">
-        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&q=80" alt="Pains artisanaux à la Boulangerie Du Marché Apollo" />
-        <div class="hero-badge"><span class="stars">★★★★</span> 4,1/5 · 85 avis Google</div>
-      </div>
     </div>
+    <div class="hero-meta">
+      <b>★ 4,1 / 5</b>
+      <span>85 avis Google</span>
+      <span>Artisan boulanger</span>
+    </div>
+    <div class="scroll-hint">Scroll</div>
   </section>
 
+  <!-- MARQUEE -->
   <div class="marquee" aria-hidden="true">
     <div class="marquee-track">
-      <span>Baguette tradition <b>·</b> Croissants pur beurre <b>·</b> Pain de campagne <b>·</b> Pâtisserie maison <b>·</b> Sandwichs frais <b>·</b> Méchoui traiteur <b>·</b> </span>
-      <span>Baguette tradition <b>·</b> Croissants pur beurre <b>·</b> Pain de campagne <b>·</b> Pâtisserie maison <b>·</b> Sandwichs frais <b>·</b> Méchoui traiteur <b>·</b> </span>
+      <span>Baguette tradition <i>✦</i> Croissants pur beurre <i>✦</i> Pain de campagne <i>✦</i> Pâtisserie maison <i>✦</i> Sandwichs frais <i>✦</i> Méchoui traiteur <i>✦</i></span>
+      <span>Baguette tradition <i>✦</i> Croissants pur beurre <i>✦</i> Pain de campagne <i>✦</i> Pâtisserie maison <i>✦</i> Sandwichs frais <i>✦</i> Méchoui traiteur <i>✦</i></span>
     </div>
   </div>
 
+  <!-- STATEMENT scroll-lit -->
+  <section class="statement wrap" data-statement>
+    <p>
+      Chaque matin à 5h, le four s'allume. Baguettes dorées, croissants encore tièdes,
+      gâteaux <span class="hl">généreux comme l'accueil</span> — le quartier le sait depuis quinze ans.
+    </p>
+  </section>
+
+  <!-- MAISON -->
   <section id="maison" class="wrap about-grid">
-    <div class="about-media reveal">
-      <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=800&q=80" alt="Vitrine de viennoiseries fraîches" />
-      <div class="about-num">15<span>ans de<br/>quartier</span></div>
+    <div class="about-media">
+      <div class="img-reveal" data-img-reveal>
+        <img src="https://images.unsplash.com/photo-1517433670267-08bbd4be890f?w=900&q=80" alt="Vitrine de viennoiseries fraîches" />
+      </div>
+      <div class="about-sticker">artisan<br/>depuis<br/>2010</div>
     </div>
     <div class="about-text">
       <p class="eyebrow reveal">La maison</p>
-      <h2 class="section-title reveal">Une boulangerie de quartier, tenue avec générosité.</h2>
-      <p class="reveal" data-reveal-delay="100">Ouverte en 2010, la Boulangerie Du Marché Apollo fait partie du décor de L'Haÿ-les-Roses. On y vient pour la baguette du matin, on y reste pour l'accueil : les clients le disent depuis des années, l'équipe est aussi généreuse que les parts de gâteau.</p>
-      <p class="reveal" data-reveal-delay="180">Ici tout est pensé pour le quotidien : accès adapté PMR, paiement sans contact, vente à emporter rapide — et des produits qui sortent du four toute la journée, pas seulement le matin.</p>
-    </div>
-  </section>
-
-  <section id="produits" class="products">
-    <div class="wrap">
-      <p class="eyebrow reveal">Nos produits</p>
-      <h2 class="section-title reveal">Du pain de tradition à la pâtisserie du dimanche.</h2>
-      <div class="product-grid" data-spotlight>
-        <div class="p-card p-card--big reveal"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=800&q=80" alt="Pains de tradition et de campagne" /><span class="tag">Pains &amp; tradition</span></div>
-        <div class="p-card p-card--tall reveal" data-reveal-delay="100"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=700&q=80" alt="Croissants et pains au chocolat" /><span class="tag">Viennoiseries</span></div>
-        <div class="p-card p-card--reg reveal" data-reveal-delay="150"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=700&q=80" alt="Tartes et pâtisseries" /><span class="tag">Pâtisserie</span></div>
-        <div class="p-card p-card--reg reveal" data-reveal-delay="200"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=700&q=80" alt="Sandwichs préparés" /><span class="tag">Sandwichs</span></div>
-        <div class="p-card p-card--wide reveal" data-reveal-delay="250"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=900&q=80" alt="Gâteaux d'anniversaire maison" /><span class="tag">Gâteaux maison</span></div>
+      <h2 class="mask-title" style="font-size:clamp(2rem,4.6vw,3.2rem);margin-bottom:1.4rem"><span>Une boulangerie de quartier, tenue avec générosité.</span></h2>
+      <p class="lead reveal" data-reveal-delay="100">On y vient pour la baguette du matin, on y reste pour l'accueil : les clients le disent depuis des années, l'équipe est aussi généreuse que les parts de gâteau.</p>
+      <p class="lead reveal" data-reveal-delay="180">Accès PMR, paiement sans contact, vente à emporter rapide — et des produits qui sortent du four toute la journée.</p>
+      <div class="stats reveal" data-reveal-delay="240">
+        <div class="stat"><b data-counter="15">0</b><span>ans de quartier</span></div>
+        <div class="stat"><b><span data-counter="4" data-decimal=",1">0</span></b><span>note Google</span></div>
+        <div class="stat"><b data-counter="85">0</b><span>avis clients</span></div>
       </div>
     </div>
   </section>
 
-  <section id="traiteur" class="wrap">
+  <!-- PRODUITS horizontal -->
+  <section id="produits" class="h-scroll" data-hscroll>
+    <div class="h-sticky">
+      <div class="h-head">
+        <h2>Du fournil à la vitrine.</h2>
+        <span class="h-hint">Scroll → la vitrine défile</span>
+      </div>
+      <div class="h-track" data-htrack>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=900&q=80" alt="Pains de tradition" /><span class="h-num">01</span><span class="h-tag">Pains &amp; tradition</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=900&q=80" alt="Croissants pur beurre" /><span class="h-num">02</span><span class="h-tag">Viennoiseries</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1464195244916-405fa0a82545?w=900&q=80" alt="Tartes et pâtisseries" /><span class="h-num">03</span><span class="h-tag">Pâtisserie</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=900&q=80" alt="Sandwichs frais" /><span class="h-num">04</span><span class="h-tag">Sandwichs</span></div>
+        <div class="h-card"><img src="https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=900&q=80" alt="Gâteaux maison" /><span class="h-num">05</span><span class="h-tag">Gâteaux maison</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAITEUR -->
+  <section id="traiteur" class="wrap traiteur">
     <div class="band reveal">
       <div class="band-inner">
         <div>
-          <p class="eyebrow" style="color:var(--accent-2)">Traiteur &amp; événements</p>
-          <h2>Mariages, anniversaires : on s'occupe aussi de vos réceptions.</h2>
+          <p class="eyebrow">Traiteur &amp; événements</p>
+          <h2>Mariages, anniversaires : on régale aussi vos réceptions.</h2>
           <p>Service traiteur avec méchoui pour vos grandes occasions. Un savoir-faire qui distingue la maison, en plus du pain et de la pâtisserie du quotidien.</p>
-          <a href="tel:+33100000000" class="btn" style="margin-top:1.6rem">Demander un devis</a>
+          <a href="tel:+33100000000" class="btn" data-hover>Demander un devis</a>
         </div>
-        <div class="band-stat">
-          <b>4,1</b>
-          <span>★★★★☆ sur 85 avis clients</span>
-        </div>
+        <div class="band-big">Méchoui<small>La spécialité événements de la maison</small></div>
       </div>
     </div>
   </section>
 
-  <section id="avis" class="wrap">
-    <div class="reviews-grid">
-      <p class="quote reveal">Produits frais, gâteaux pas trop sucrés, une équipe adorable et généreuse.</p>
-      <div class="review-cards">
-        <div class="review-card reveal"><div class="stars">★★★★★</div><p>« Très bonne boulangerie, produits très frais, patrons adorables, prix très raisonnables, très propre. »</p><cite>— Avis client Google</cite></div>
-        <div class="review-card reveal" data-reveal-delay="100"><div class="stars">★★★★★</div><p>« Excellents gâteaux, bon pain et bonnes pâtisseries. Le service traiteur pour notre mariage a fait la différence. »</p><cite>— Avis client</cite></div>
-        <div class="review-card reveal" data-reveal-delay="200"><div class="stars">★★★★☆</div><p>« Accueil chaleureux, un quartier qui aime cette boulangerie depuis des années. »</p><cite>— Avis client</cite></div>
-      </div>
+  <!-- AVIS -->
+  <section id="avis" class="reviews">
+    <p class="eyebrow">★ ★ ★ ★</p>
+    <h2 class="mask-title"><span>Le quartier en parle mieux que nous.</span></h2>
+    <div class="rev-row">
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Très bonne boulangerie, produits très frais, patrons adorables, prix très raisonnables, très propre. »</p><cite>— Avis Google</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Excellents gâteaux, bon pain et bonnes pâtisseries. Le traiteur pour notre mariage a fait la différence. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★☆</div><p>« Accueil chaleureux, un quartier qui aime cette boulangerie depuis des années. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Produits frais, gâteaux pas trop sucrés, beaucoup de gentillesse, très généreux. »</p><cite>— Avis Google</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Très bonne boulangerie, produits très frais, patrons adorables, prix très raisonnables, très propre. »</p><cite>— Avis Google</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Excellents gâteaux, bon pain et bonnes pâtisseries. Le traiteur pour notre mariage a fait la différence. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★☆</div><p>« Accueil chaleureux, un quartier qui aime cette boulangerie depuis des années. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Produits frais, gâteaux pas trop sucrés, beaucoup de gentillesse, très généreux. »</p><cite>— Avis Google</cite></div>
+    </div>
+    <div class="rev-row reverse">
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« La baguette tradition est excellente, toujours bien cuite. Mon arrêt du matin. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Gâteau d'anniversaire parfait, pas trop sucré, tout le monde a adoré. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★☆</div><p>« Bon rapport qualité-prix, équipe souriante même aux heures de pointe. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Boulangerie propre, produits frais toute la journée. Je recommande. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« La baguette tradition est excellente, toujours bien cuite. Mon arrêt du matin. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Gâteau d'anniversaire parfait, pas trop sucré, tout le monde a adoré. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★☆</div><p>« Bon rapport qualité-prix, équipe souriante même aux heures de pointe. »</p><cite>— Avis client</cite></div>
+      <div class="rev-card"><div class="stars">★★★★★</div><p>« Boulangerie propre, produits frais toute la journée. Je recommande. »</p><cite>— Avis client</cite></div>
     </div>
   </section>
 
-  <section id="infos" class="infos">
-    <div class="wrap infos-grid">
-      <div>
-        <p class="eyebrow reveal">Infos &amp; plan</p>
-        <h2 class="section-title reveal">Venez nous voir</h2>
-        <table class="hours-table reveal">
-          <tr><td>Lundi</td><td>Fermé</td></tr>
-          <tr class="open"><td>Mardi — Dimanche</td><td>7h00 – 20h00</td></tr>
-        </table>
-        <ul class="contact-list reveal" data-reveal-delay="100">
-          <li><span class="ico">📍</span> <a href="https://www.google.com/maps/dir/?api=1&destination=18+Rue+Henri+Thirard,+94240+L'Haÿ-les-Roses" target="_blank" rel="noopener">18 Rue Henri Thirard, 94240 L'Haÿ-les-Roses</a></li>
-          <li><span class="ico">📞</span> <a href="tel:+33100000000">01 00 00 00 00 <em style="font-style:normal;font-weight:400;color:var(--muted);font-size:.8rem">(à confirmer)</em></a></li>
-          <li><span class="ico">♿</span> Accès adapté PMR</li>
-          <li><span class="ico">💳</span> CB &amp; paiement sans contact</li>
-        </ul>
-      </div>
-      <div class="map-wrap reveal" data-reveal-delay="150">
-        <iframe class="map-frame"
-          src="https://www.google.com/maps?q=18+Rue+Henri+Thirard,+94240+L'Ha%C3%BF-les-Roses&z=16&output=embed"
-          loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localisation de la Boulangerie Du Marché Apollo"></iframe>
-        <a class="map-cta btn" href="https://www.google.com/maps/dir/?api=1&destination=18+Rue+Henri+Thirard,+94240+L'Haÿ-les-Roses" target="_blank" rel="noopener">🧭 Itinéraire</a>
-      </div>
+  <!-- INFOS + MAPS -->
+  <section id="infos" class="wrap infos-grid">
+    <div>
+      <p class="eyebrow reveal">Infos &amp; plan</p>
+      <h2 class="mask-title" style="font-size:clamp(2rem,4.6vw,3rem);margin-bottom:1.2rem"><span>Venez nous voir</span></h2>
+      <table class="hours-table reveal">
+        <tr><td>Lundi</td><td>Fermé</td></tr>
+        <tr class="open"><td>Mardi — Dimanche</td><td>7h00 – 20h00</td></tr>
+      </table>
+      <ul class="contact-list reveal" data-reveal-delay="100">
+        <li><span class="ico">📍</span> <a href="https://www.google.com/maps/dir/?api=1&destination=18+Rue+Henri+Thirard,+94240+L'Haÿ-les-Roses" target="_blank" rel="noopener" data-hover>18 Rue Henri Thirard, 94240 L'Haÿ-les-Roses</a></li>
+        <li><span class="ico">📞</span> <a href="tel:+33100000000" data-hover>01 00 00 00 00 <em style="font-style:normal;font-weight:400;color:var(--muted);font-size:.8rem">(à confirmer)</em></a></li>
+        <li><span class="ico">♿</span> Accès adapté PMR</li>
+        <li><span class="ico">💳</span> CB &amp; sans contact</li>
+      </ul>
     </div>
-  </section>
-
-  <section class="wrap final-cta">
-    <h2 class="reveal">Le pain frais vous attend, à deux pas de chez vous.</h2>
-    <a href="tel:+33100000000" class="btn reveal" data-reveal-delay="120">📞 Appeler la boulangerie</a>
+    <div class="map-wrap reveal" data-reveal-delay="150">
+      <iframe class="map-frame"
+        src="https://www.google.com/maps?q=18+Rue+Henri+Thirard,+94240+L'Ha%C3%BF-les-Roses&z=16&output=embed"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Localisation de la Boulangerie Du Marché Apollo"></iframe>
+      <a class="map-cta btn" href="https://www.google.com/maps/dir/?api=1&destination=18+Rue+Henri+Thirard,+94240+L'Haÿ-les-Roses" target="_blank" rel="noopener" data-hover>🧭 Itinéraire</a>
+    </div>
   </section>
 
 </main>
 
-<footer>
-  <div class="wrap foot-grid">
-    <div>
-      <strong>Boulangerie Du Marché Apollo</strong><br/>
-      18 Rue Henri Thirard, 94240 L'Haÿ-les-Roses
-      <p class="foot-note">© <span id="y"></span> Boulangerie Du Marché Apollo. Maquette de démonstration.</p>
-    </div>
-    <div>Mardi – Dimanche · 7h – 20h</div>
+<!-- FOOTER -->
+<footer class="mega-footer">
+  <div class="wrap cta-line">
+    <h2 class="mask-title"><span>Le pain frais vous attend, à deux pas de chez vous.</span></h2>
+    <a href="tel:+33100000000" class="btn" data-hover>📞 Appeler la boulangerie</a>
+  </div>
+  <div class="giant" aria-hidden="true">Apollo</div>
+  <div class="wrap foot-bottom">
+    <span>© <span id="y"></span> Boulangerie Du Marché Apollo — 18 Rue Henri Thirard, L'Haÿ-les-Roses</span>
+    <span>Mardi – Dimanche · 7h – 20h · Maquette de démonstration</span>
   </div>
 </footer>
 
@@ -379,58 +555,197 @@
 
 <script>
 document.getElementById('y').textContent = new Date().getFullYear();
+var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Titre hero mot à mot */
+/* ---- Preloader ---- */
 (function(){
-  var h = document.querySelector('[data-split]');
-  if(!h) return;
-  var words = h.textContent.split(' ');
-  h.innerHTML = words.map(function(w,i){
-    return '<span class="w" style="animation-delay:'+(120+i*70)+'ms">'+w+'</span>';
-  }).join(' ');
+  var pl = document.querySelector('[data-preloader]');
+  var count = document.querySelector('[data-count]');
+  if(!pl){document.body.classList.remove('locked');return;}
+  if(reduced){pl.remove();document.body.classList.remove('locked');return;}
+  var start = null, dur = 1300;
+  function step(t){
+    if(!start) start = t;
+    var p = Math.min((t-start)/dur, 1);
+    var eased = 1-Math.pow(1-p,3);
+    count.textContent = Math.round(eased*100)+'%';
+    if(p<1){ requestAnimationFrame(step); }
+    else {
+      pl.classList.add('done');
+      document.body.classList.remove('locked');
+      setTimeout(function(){ pl.remove(); }, 1100);
+    }
+  }
+  requestAnimationFrame(step);
 })();
 
-/* Reveal au scroll */
-(function () {
-  var els = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window) || !els.length) { els.forEach(function(el){el.classList.add('is-visible');}); return; }
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (entry) {
-      if (!entry.isIntersecting) return;
-      var el = entry.target, delay = parseInt(el.getAttribute('data-reveal-delay')||'0',10);
-      setTimeout(function(){ el.classList.add('is-visible'); }, delay);
-      io.unobserve(el);
-    });
-  }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
-  els.forEach(function(el){ io.observe(el); });
+/* ---- Split lettres hero ---- */
+(function(){
+  var lines = document.querySelectorAll('[data-hero-title] .line');
+  var base = reduced ? 0 : 1400, i = 0;
+  lines.forEach(function(line){
+    var text = line.textContent;
+    line.innerHTML = text.split('').map(function(ch){
+      var d = base + (i++)*55;
+      return '<span class="ch" style="--d:'+d+'ms">'+(ch===' '?'&nbsp;':ch)+'</span>';
+    }).join('');
+  });
 })();
 
-/* Header solidifié */
-(function () {
-  var header = document.querySelector('[data-header]');
-  var onScroll = function(){ header.classList.toggle('scrolled', window.scrollY > 40); };
-  window.addEventListener('scroll', onScroll, { passive:true }); onScroll();
+/* ---- Curseur custom ---- */
+(function(){
+  if(!window.matchMedia('(pointer:fine)').matches || reduced) return;
+  var dot = document.querySelector('[data-cdot]'), ring = document.querySelector('[data-cring]');
+  var mx=-100,my=-100,rx=-100,ry=-100;
+  window.addEventListener('pointermove',function(e){mx=e.clientX;my=e.clientY;},{passive:true});
+  (function loop(){
+    rx += (mx-rx)*.16; ry += (my-ry)*.16;
+    dot.style.transform='translate('+(mx-4)+'px,'+(my-4)+'px)';
+    ring.style.transform='translate('+(rx-19)+'px,'+(ry-19)+'px)';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a,button,[data-hover]').forEach(function(el){
+    el.addEventListener('pointerenter',function(){ring.classList.add('grow');});
+    el.addEventListener('pointerleave',function(){ring.classList.remove('grow');});
+  });
 })();
 
-/* Burger */
-(function () {
-  var burger = document.querySelector('[data-burger]'), nav = document.querySelector('[data-nav]');
-  if(!burger||!nav) return;
-  burger.addEventListener('click', function(){ nav.classList.toggle('open'); burger.classList.toggle('active'); });
-  nav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ nav.classList.remove('open'); burger.classList.remove('active'); }); });
-})();
-
-/* Spotlight hover bento */
-(function () {
-  var grid = document.querySelector('[data-spotlight]');
-  if(!grid) return;
-  grid.querySelectorAll('.p-card').forEach(function(card){
-    card.addEventListener('pointermove', function(e){
-      var r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', (e.clientX-r.left)+'px');
-      card.style.setProperty('--my', (e.clientY-r.top)+'px');
+/* ---- Menu overlay ---- */
+(function(){
+  var btn = document.querySelector('[data-menu-btn]');
+  var menu = document.querySelector('[data-menu]');
+  btn.addEventListener('click',function(){
+    document.body.classList.toggle('menu-open');
+    btn.querySelector('.label').textContent = document.body.classList.contains('menu-open')?'Fermer':'Menu';
+  });
+  menu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){
+      document.body.classList.remove('menu-open');
+      btn.querySelector('.label').textContent='Menu';
     });
   });
+})();
+
+/* ---- Scroll global : header, progress, parallax, horizontal, statement ---- */
+(function(){
+  var header = document.querySelector('[data-header]');
+  var progress = document.querySelector('[data-progress]');
+  var parallaxEls = document.querySelectorAll('[data-parallax]');
+  var hsection = document.querySelector('[data-hscroll]');
+  var htrack = document.querySelector('[data-htrack]');
+  var statement = document.querySelector('[data-statement]');
+  var words = [];
+
+  if(statement){
+    var p = statement.querySelector('p');
+    function splitWords(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(child){
+        if(child.nodeType===3){
+          var frag = document.createDocumentFragment();
+          child.textContent.split(/\s+/).forEach(function(w){
+            if(!w) return;
+            var s = document.createElement('span');
+            s.className='sw'; s.textContent=w;
+            frag.appendChild(s); frag.appendChild(document.createTextNode(' '));
+          });
+          node.replaceChild(frag,child);
+        } else if(child.nodeType===1){ splitWords(child); }
+      });
+    }
+    splitWords(p);
+    words = statement.querySelectorAll('.sw');
+  }
+
+  /* hauteur virtuelle section horizontale */
+  function sizeH(){
+    if(!hsection||!htrack) return;
+    if(reduced) return;
+    var extra = htrack.scrollWidth - window.innerWidth;
+    hsection.style.height = (window.innerHeight + Math.max(extra,0)) + 'px';
+  }
+  sizeH();
+  window.addEventListener('resize', sizeH);
+
+  function onScroll(){
+    var sy = window.scrollY;
+    header.classList.toggle('scrolled', sy>60);
+
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (max>0 ? (sy/max)*100 : 0)+'%';
+
+    if(!reduced){
+      parallaxEls.forEach(function(el){
+        var sp = parseFloat(el.getAttribute('data-parallax'))||.2;
+        el.style.transform = 'translateY('+(sy*sp)+'px)';
+      });
+
+      if(hsection && htrack){
+        var r = hsection.getBoundingClientRect();
+        var total = hsection.offsetHeight - window.innerHeight;
+        if(total>0){
+          var prog = Math.min(Math.max(-r.top/total,0),1);
+          var extra = htrack.scrollWidth - window.innerWidth;
+          htrack.style.transform = 'translateX('+(-prog*extra)+'px)';
+        }
+      }
+
+      if(statement && words.length){
+        var sr = statement.getBoundingClientRect();
+        var startAt = window.innerHeight*.85, endAt = window.innerHeight*.35;
+        var sprog = Math.min(Math.max((startAt - sr.top)/(sr.height + startAt - endAt),0),1);
+        var lit = Math.floor(sprog*words.length*1.15);
+        words.forEach(function(w,i){ w.classList.toggle('lit', i<lit); });
+      }
+    }
+    ticking = false;
+  }
+  var ticking = false;
+  window.addEventListener('scroll',function(){
+    if(!ticking){ requestAnimationFrame(onScroll); ticking = true; }
+  },{passive:true});
+  onScroll();
+})();
+
+/* ---- Reveals, masques, images, compteurs ---- */
+(function(){
+  var els = document.querySelectorAll('.reveal,.mask-title,[data-img-reveal]');
+  if(!('IntersectionObserver' in window)||reduced){ els.forEach(function(el){el.classList.add('is-visible');}); }
+  else{
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(!entry.isIntersecting) return;
+        var el = entry.target, d = parseInt(el.getAttribute('data-reveal-delay')||'0',10);
+        setTimeout(function(){ el.classList.add('is-visible'); }, d);
+        io.unobserve(el);
+      });
+    },{threshold:.15,rootMargin:'0px 0px -8% 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  }
+
+  var counters = document.querySelectorAll('[data-counter]');
+  function animate(el){
+    var target = parseInt(el.getAttribute('data-counter'),10);
+    var dec = el.getAttribute('data-decimal')||'';
+    var t0 = null, dur = 1400;
+    function tick(t){
+      if(!t0) t0=t;
+      var p = Math.min((t-t0)/dur,1), eased = 1-Math.pow(1-p,3);
+      el.textContent = Math.round(eased*target) + dec;
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  if(reduced||!('IntersectionObserver' in window)){
+    counters.forEach(function(c){ c.textContent = c.getAttribute('data-counter') + (c.getAttribute('data-decimal')||''); });
+  } else {
+    var cio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(!e.isIntersecting) return;
+        animate(e.target); cio.unobserve(e.target);
+      });
+    },{threshold:.5});
+    counters.forEach(function(c){ cio.observe(c); });
+  }
 })();
 </script>
 </body>
